@@ -1,0 +1,44 @@
+# =========================================================
+# Motor_Control_Board_STM32F407VET6 — 毕业设计工程
+# 原则：源码 / CubeMX 工程配置 / Keil 工程文件进库
+#       资料目录 与 编译产物 不进库
+# =========================================================
+
+# ---------- 1. 资料目录 ----------
+# 开发板资料、数据手册、参考手册、论文、截图、厂商标书等
+/资料/
+
+# ---------- 2. Keil MDK 编译产物 ----------
+# 本工程 Objects / Listings 统一输出到 MDK-ARM\<target>\ 目录下
+/Motor_Control_Board_STM32F407VET6/MDK-ARM/Motor_Control_Board_STM32F407VET6/
+
+# 兜底规则：编译中间文件 / 链接产物 / 烧录文件 / 汇编列表
+*.o
+*.obj
+*.d
+*.crf
+*.dep
+*.lnp
+*.axf
+*.hex
+*.bin
+*.elf
+*.map
+*.lst
+*.sct
+*.build_log.htm
+
+# ---------- 3. Keil 本地用户配置（含本机路径与用户名） ----------
+*.uvguix.*
+*.scvd
+*.bak
+*.tmp
+*.log
+JLinkLog.txt
+
+# ---------- 4. 编辑器 / 系统垃圾 ----------
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+.DS_Store
