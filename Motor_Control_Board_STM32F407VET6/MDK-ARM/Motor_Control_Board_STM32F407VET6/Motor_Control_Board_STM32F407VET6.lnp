@@ -1,0 +1,24 @@
+--cpu=Cortex-M4.fp.sp
+"motor_control_board_stm32f407vet6\startup_stm32f407xx.o"
+"motor_control_board_stm32f407vet6\main.o"
+"motor_control_board_stm32f407vet6\gpio.o"
+"motor_control_board_stm32f407vet6\stm32f4xx_it.o"
+"motor_control_board_stm32f407vet6\stm32f4xx_hal_msp.o"
+"motor_control_board_stm32f407vet6\stm32f4xx_hal_rcc.o"
+"motor_control_board_stm32f407vet6\stm32f4xx_hal_rcc_ex.o"
+"motor_control_board_stm32f407vet6\stm32f4xx_hal_flash.o"
+"motor_control_board_stm32f407vet6\stm32f4xx_hal_flash_ex.o"
+"motor_control_board_stm32f407vet6\stm32f4xx_hal_flash_ramfunc.o"
+"motor_control_board_stm32f407vet6\stm32f4xx_hal_gpio.o"
+"motor_control_board_stm32f407vet6\stm32f4xx_hal_dma_ex.o"
+"motor_control_board_stm32f407vet6\stm32f4xx_hal_dma.o"
+"motor_control_board_stm32f407vet6\stm32f4xx_hal_pwr.o"
+"motor_control_board_stm32f407vet6\stm32f4xx_hal_pwr_ex.o"
+"motor_control_board_stm32f407vet6\stm32f4xx_hal_cortex.o"
+"motor_control_board_stm32f407vet6\stm32f4xx_hal.o"
+"motor_control_board_stm32f407vet6\stm32f4xx_hal_exti.o"
+"motor_control_board_stm32f407vet6\system_stm32f4xx.o"
+--strict --scatter "Motor_Control_Board_STM32F407VET6\Motor_Control_Board_STM32F407VET6.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "Motor_Control_Board_STM32F407VET6.map" -o Motor_Control_Board_STM32F407VET6\Motor_Control_Board_STM32F407VET6.axf
