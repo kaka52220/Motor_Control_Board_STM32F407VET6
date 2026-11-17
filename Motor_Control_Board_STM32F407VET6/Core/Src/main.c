@@ -19,7 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "gpio.h"
-
+#include "Button.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -54,7 +54,18 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+  volatile uint32_t key_down_count = 0;
+  volatile uint32_t key_up_count = 0;
+	static void key_down_callback(button *handle, void *user_data)
+		{
+			key_down_count++;
+		}
+	static void key_up_callback(button *handle, void *user_data)
+		{
+			key_up_count++;
+		}
+	static button btn1;
+	
 /* USER CODE END 0 */
 
 /**
@@ -75,6 +86,7 @@ int main(void)
 
   /* USER CODE BEGIN Init */
 
+	
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -87,7 +99,10 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-
+  button_init(&btn1,read_button_gpio,1,1);
+	button_attach(&btn1, BTN_PRESS_DOWN, key_down_callback);
+	button_attach(&btn1, BTN_PRESS_UP, key_up_callback);
+	static uint32_t button_tick_last = 0;
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -95,7 +110,12 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
+if ((uint32_t)(HAL_GetTick() - button_tick_last) >= 5)
+    {
+        button_tick_last += 5;
+        button_handle(&btn1);
+    }
+		
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
