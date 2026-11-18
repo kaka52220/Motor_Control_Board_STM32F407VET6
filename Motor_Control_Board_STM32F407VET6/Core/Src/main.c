@@ -56,6 +56,8 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN 0 */
   volatile uint32_t key_down_count = 0;
   volatile uint32_t key_up_count = 0;
+	volatile uint32_t single_click_count = 0;
+volatile uint32_t double_click_count = 0;
 	static void key_down_callback(button *handle, void *user_data)
 		{
 			key_down_count++;
@@ -64,8 +66,17 @@ void SystemClock_Config(void);
 		{
 			key_up_count++;
 		}
+		static void single_click_callback(button *handle, void *user_data)
+{
+
+    single_click_count++;
+}
+
+static void double_click_callback(button *handle, void *user_data)
+{
+    double_click_count++;
+}
 	static button btn1;
-	
 /* USER CODE END 0 */
 
 /**
@@ -100,6 +111,8 @@ int main(void)
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
   button_init(&btn1,read_button_gpio,1,1);
+	button_attach(&btn1, BTN_SINGLE_CLICK, single_click_callback);
+	button_attach(&btn1, BTN_DOUBLE_CLICK, double_click_callback);
 	button_attach(&btn1, BTN_PRESS_DOWN, key_down_callback);
 	button_attach(&btn1, BTN_PRESS_UP, key_up_callback);
 	static uint32_t button_tick_last = 0;

@@ -69,6 +69,14 @@ static void button_emit(button *handle, buttonEvent event)
 	//-----------------状态机------------------/
 	void button_handle(button *handle)
 	{
+		//-----非空闲状态下每5ms累加一次---------//
+		if(handle ->state > BTN_STATE_IDLE)
+			{
+				 if(handle ->ticks < UINT16_MAX)
+					{
+						handle ->ticks++;
+					}
+			}
 		button_debounce(handle);
 		switch (handle ->state)
 		{
@@ -77,27 +85,83 @@ static void button_emit(button *handle, buttonEvent event)
 					{
 						//handle ->event = BTN_PRESS_DOWN;
 						button_emit(handle,BTN_PRESS_DOWN);
+						handle ->ticks = 0;
+						handle ->repeat = 1;
 						handle ->state = BTN_STATE_PRESS;
-						
 					}
 				else 
 					{
 						handle ->event = BTN_NONE_PRESS;
 					}
 				break;
+					
 			case BTN_STATE_PRESS:
 				if(handle ->button_level != handle ->active_level)
 					{
 						//handle ->event = BTN_PRESS_UP;
 						button_emit(handle, BTN_PRESS_UP);
+						handle->ticks = 0;
 						handle ->state = BTN_STATE_IDLE;
 					}
 					break;
 					
-			default:
-        handle->state = BTN_STATE_IDLE;
-        handle->event = BTN_NONE_PRESS;
-        break;		
+			case BTN_STATE_RELEASE:
+				if(handle ->button_level == handle ->active_level)
+					{
+						button_emit(handle,BTN_PRESS_DOWN);
+						
+						handle -> repeat++;
+						button_emit(handle,BTN_PRESS_REPEAT);
+						
+						handle ->ticks = 0;
+						handle ->state = BTN_STATE_REPEAT;
+					}
+					else if(handle->ticks > SHORT_TICKS)
+						{
+							/* 等待结束，根据按下次数判断单击或双击 */
+							if(handle ->repeat == 1)
+								{
+									button_emit(handle,BTN_SINGLE_CLICK);
+								}
+							else if(handle ->repeat == 2)
+								{
+									button_emit(handle,BTN_DOUBLE_CLICK);
+								}
+								
+							handle ->state = BTN_STATE_IDLE;
+						}
+					break;
+						
+				case BTN_STATE_REPEAT:	
+					if(handle ->button_level != handle ->active_level)
+						{
+							button_emit(handle,BTN_PRESS_UP);
+							
+							if(handle ->ticks < SHORT_TICKS)
+								{
+									handle ->ticks = 0;
+									handle ->state = BTN_STATE_RELEASE;
+								}
+							else
+								{
+									handle->state = BTN_STATE_IDLE;
+								}
+						}
+					else if (handle->ticks > SHORT_TICKS)
+						{
+								/* 第二次按得太久，不再当作双击 */
+								handle->ticks = 0;
+								handle->repeat = 0;
+								handle->state = BTN_STATE_PRESS;
+						}
+						break;
+					
+				default:
+					handle->state = BTN_STATE_IDLE;
+					handle->event = BTN_NONE_PRESS;
+					handle->ticks = 0;
+					handle->repeat = 0;
+					break;		
 		}
 	}
 	

@@ -3,12 +3,18 @@
 #include "gpio.h"
 
 #define DEBOUNCE_TICKS 3
+#define TICKS_INTERVAL 5
+#define SHORT_TICKS (300/TICKS_INTERVAL)
+
 typedef struct button button;//前向声明,打破循环依赖
 typedef void (*BtnCallBack)(button *handle,void *user_data);
 
 typedef enum{
 	BTN_STATE_IDLE = 0,
-	BTN_STATE_PRESS
+	BTN_STATE_PRESS,
+	BTN_STATE_RELEASE,
+	BTN_STATE_REPEAT,
+	BTN_STATE_LONG_HOLD
 }buttonState;
 
 typedef enum{
@@ -24,6 +30,8 @@ typedef enum{
 }buttonEvent;
 
 struct button{
+	uint16_t ticks;
+	uint8_t repeat;
 	uint8_t button_id;
 	uint8_t active_level;
 	uint8_t button_level;//去抖稳定后的电平
