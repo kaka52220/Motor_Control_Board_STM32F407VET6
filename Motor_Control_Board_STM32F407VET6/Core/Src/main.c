@@ -99,7 +99,8 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-  button_init(&btn1,read_button_gpio,1,1);
+	button_enroll(&btn1);//注册按钮
+  button_init(&btn1,read_button_gpio,1,1);//初始化按钮
 	button_attach(&btn1, BTN_LONG_PRESS_START, long_start_callback);
 	button_attach(&btn1, BTN_LONG_PRESS_HOLD, long_hold_callback);
 
@@ -114,7 +115,7 @@ int main(void)
 if ((uint32_t)(HAL_GetTick() - button_tick_last) >= 5)
     {
         button_tick_last += 5;
-        button_handle(&btn1);
+				button_Task();
     }
 		
     /* USER CODE BEGIN 3 */

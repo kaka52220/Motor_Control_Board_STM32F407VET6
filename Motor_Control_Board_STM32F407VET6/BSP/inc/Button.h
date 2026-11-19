@@ -45,6 +45,8 @@ struct button{
 	BtnCallBack cb[BTN_EVENT_COUNT];
 	
 	void *user_data;
+	
+	button *next;
 };
 
 
@@ -52,6 +54,8 @@ uint8_t read_button_gpio(uint8_t button_id);
 uint8_t button_read_level(button *handle);
 void button_init(button *handle,uint8_t (*hal_read_button_level)(uint8_t),uint8_t button_id,uint8_t active_level);
 void button_debounce(button *handle);
-void button_handle(button *handle);
+//void button_handle(button *handle);
 void button_attach(button *handle,buttonEvent event,BtnCallBack callback);
+int button_enroll(button *handle);
+void button_Task(void);
 #endif

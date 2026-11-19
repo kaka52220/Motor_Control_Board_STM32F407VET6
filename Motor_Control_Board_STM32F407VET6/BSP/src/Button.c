@@ -1,6 +1,8 @@
 #include "Button.h"
 #include "string.h"
 
+static button *head_handle = NULL;//单链表表头指针
+
 uint8_t read_button_gpio(uint8_t button_id)
 	{
 		switch(button_id)
@@ -67,7 +69,7 @@ static void button_emit(button *handle, buttonEvent event)
 	}
 	
 	//-----------------状态机------------------/
-	void button_handle(button *handle)
+static void button_handle(button *handle)
 	{
 		//-----非空闲状态下每5ms累加一次---------//
 		if(handle ->state > BTN_STATE_IDLE)
@@ -160,6 +162,7 @@ static void button_emit(button *handle, buttonEvent event)
 								handle->state = BTN_STATE_PRESS;//点击后又长按的保护
 						}
 						break;
+						
 				case BTN_STATE_LONG_HOLD:	
 					if(handle ->button_level == handle ->active_level)
 						{
@@ -180,9 +183,43 @@ static void button_emit(button *handle, buttonEvent event)
 					break;		
 		}
 	}
+
+int button_enroll(button *handle)
+{
+	button *target;
+	if(handle == NULL)
+		{
+			return -2;
+		}
+		
+	/* ---------查重-----------*/
+	target = head_handle;
+	while(target != NULL)
+		{
+			if(target == handle)
+				{
+					return -1;
+				}				
+			target = target ->next;
+		}
 	
+	/*----头插法----*/
+	handle ->next = head_handle;
+	head_handle = handle;
 	
+	return 0;
+}
 	
+void button_Task(void)
+	{
+		button *target = head_handle;
+		
+		while(target != NULL)
+			{
+				button_handle(target);
+				target = target ->next;
+			}
+	}	
 	
 	
 	
