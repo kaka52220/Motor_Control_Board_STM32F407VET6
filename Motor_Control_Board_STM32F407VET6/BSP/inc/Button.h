@@ -5,6 +5,7 @@
 #define DEBOUNCE_TICKS 3
 #define TICKS_INTERVAL 5
 #define SHORT_TICKS (300/TICKS_INTERVAL)
+#define LONG_TICKS (1000/TICKS_INTERVAL)
 
 typedef struct button button;//前向声明,打破循环依赖
 typedef void (*BtnCallBack)(button *handle,void *user_data);

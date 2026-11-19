@@ -54,28 +54,17 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-  volatile uint32_t key_down_count = 0;
-  volatile uint32_t key_up_count = 0;
-	volatile uint32_t single_click_count = 0;
-volatile uint32_t double_click_count = 0;
-	static void key_down_callback(button *handle, void *user_data)
+volatile uint32_t long_start_count = 0;
+volatile uint32_t long_hold_count = 0;
+	static void long_start_callback(button *handle, void *user_data)
 		{
-			key_down_count++;
+			long_start_count++;
 		}
-	static void key_up_callback(button *handle, void *user_data)
+	static void long_hold_callback(button *handle, void *user_data)
 		{
-			key_up_count++;
+			long_hold_count++;
 		}
-		static void single_click_callback(button *handle, void *user_data)
-{
 
-    single_click_count++;
-}
-
-static void double_click_callback(button *handle, void *user_data)
-{
-    double_click_count++;
-}
 	static button btn1;
 /* USER CODE END 0 */
 
@@ -111,10 +100,9 @@ int main(void)
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
   button_init(&btn1,read_button_gpio,1,1);
-	button_attach(&btn1, BTN_SINGLE_CLICK, single_click_callback);
-	button_attach(&btn1, BTN_DOUBLE_CLICK, double_click_callback);
-	button_attach(&btn1, BTN_PRESS_DOWN, key_down_callback);
-	button_attach(&btn1, BTN_PRESS_UP, key_up_callback);
+	button_attach(&btn1, BTN_LONG_PRESS_START, long_start_callback);
+	button_attach(&btn1, BTN_LONG_PRESS_HOLD, long_hold_callback);
+
 	static uint32_t button_tick_last = 0;
   /* USER CODE END 2 */
 

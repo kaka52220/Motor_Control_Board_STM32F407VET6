@@ -101,8 +101,13 @@ static void button_emit(button *handle, buttonEvent event)
 						//handle ->event = BTN_PRESS_UP;
 						button_emit(handle, BTN_PRESS_UP);
 						handle->ticks = 0;
-						handle ->state = BTN_STATE_IDLE;
+						handle ->state = BTN_STATE_RELEASE;
 					}
+				else if(handle ->ticks > LONG_TICKS)
+					{
+						button_emit(handle,BTN_LONG_PRESS_START);//start事件只有一次，case 长按后，hold事件每5ms都会触发一次
+						handle ->state = BTN_STATE_LONG_HOLD;
+					}	
 					break;
 					
 			case BTN_STATE_RELEASE:
@@ -152,10 +157,21 @@ static void button_emit(button *handle, buttonEvent event)
 								/* 第二次按得太久，不再当作双击 */
 								handle->ticks = 0;
 								handle->repeat = 0;
-								handle->state = BTN_STATE_PRESS;
+								handle->state = BTN_STATE_PRESS;//点击后又长按的保护
 						}
 						break;
-					
+				case BTN_STATE_LONG_HOLD:	
+					if(handle ->button_level == handle ->active_level)
+						{
+								button_emit(handle,BTN_LONG_PRESS_HOLD);//start事件只有一次，case 长按后，hold事件每5ms都会触发一次
+						}
+					else
+						{
+							button_emit(handle,BTN_PRESS_UP);
+							handle->state = BTN_STATE_IDLE;
+						}
+					break;
+				
 				default:
 					handle->state = BTN_STATE_IDLE;
 					handle->event = BTN_NONE_PRESS;
