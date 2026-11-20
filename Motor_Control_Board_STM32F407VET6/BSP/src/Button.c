@@ -9,6 +9,8 @@ uint8_t read_button_gpio(uint8_t button_id)
 		{
 			case 1:
 				return (uint8_t)HAL_GPIO_ReadPin(KEY1_GPIO_Port,KEY1_Pin);//这里注意break是否需要，有return可以直接结束函数，不需要break；
+			case 2:
+				return (uint8_t)HAL_GPIO_ReadPin(KEY2_GPIO_Port,KEY2_Pin);
 			default: 
 				return 0;
 		}
@@ -30,7 +32,7 @@ uint8_t button_read_level(button *handle)
 	{
 		return handle -> hal_read_button_level(handle -> button_id);
 	}
-
+     
 void button_debounce(button *handle)
 	{
 		uint8_t read_gpio_level = button_read_level(handle);
@@ -190,16 +192,18 @@ int button_enroll(button *handle)
 	if(handle == NULL)
 		{
 			return -2;
-		}
+		}                                                                                     
 		
 	/* ---------查重-----------*/
 	target = head_handle;
+		
 	while(target != NULL)
 		{
 			if(target == handle)
 				{
 					return -1;
 				}				
+				
 			target = target ->next;
 		}
 	

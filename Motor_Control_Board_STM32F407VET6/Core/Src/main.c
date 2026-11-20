@@ -19,10 +19,10 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "gpio.h"
-#include "Button.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "Button.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -56,6 +56,10 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN 0 */
 volatile uint32_t long_start_count = 0;
 volatile uint32_t long_hold_count = 0;
+volatile uint32_t long_start_count2 = 0;
+volatile uint32_t long_hold_count2 = 0;
+volatile int a;
+volatile int b;
 	static void long_start_callback(button *handle, void *user_data)
 		{
 			long_start_count++;
@@ -64,8 +68,16 @@ volatile uint32_t long_hold_count = 0;
 		{
 			long_hold_count++;
 		}
-
-	static button btn1;
+	static void long_start_callback2(button *handle, void *user_data)
+		{
+			long_start_count2++;
+		}
+	static void long_hold_callback2(button *handle, void *user_data)
+		{
+			long_hold_count2++;
+		}
+		static button btn1;
+		static button btn2;
 /* USER CODE END 0 */
 
 /**
@@ -99,11 +111,14 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-	button_enroll(&btn1);//注册按钮
-  button_init(&btn1,read_button_gpio,1,1);//初始化按钮
+  button_init(&btn1,read_button_gpio,1,1);
+	button_init(&btn2,read_button_gpio,2,1);	
+	a = button_enroll(&btn1);
+	b = button_enroll(&btn2);
 	button_attach(&btn1, BTN_LONG_PRESS_START, long_start_callback);
 	button_attach(&btn1, BTN_LONG_PRESS_HOLD, long_hold_callback);
-
+  button_attach(&btn2, BTN_LONG_PRESS_START, long_start_callback2);
+	button_attach(&btn2, BTN_LONG_PRESS_HOLD, long_hold_callback2);
 	static uint32_t button_tick_last = 0;
   /* USER CODE END 2 */
 
@@ -111,13 +126,13 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    /* USER CODE END WHILE */
-if ((uint32_t)(HAL_GetTick() - button_tick_last) >= 5)
+		if ((uint32_t)(HAL_GetTick() - button_tick_last) >= 5)
     {
         button_tick_last += 5;
 				button_Task();
     }
-		
+    /* USER CODE END WHILE */
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
