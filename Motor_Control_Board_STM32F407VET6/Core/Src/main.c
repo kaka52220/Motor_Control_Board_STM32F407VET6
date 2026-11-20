@@ -54,31 +54,50 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-volatile uint32_t long_start_count = 0;
-volatile uint32_t long_hold_count = 0;
-volatile uint32_t long_start_count2 = 0;
-volatile uint32_t long_hold_count2 = 0;
+typedef struct{
+	volatile uint32_t long_start_pending;
+	volatile uint32_t long_hold_pending;
+	uint32_t long_start_handled;
+	uint32_t long_hold_handled;
+}keycontext;
+static keycontext key1_ctx;
+static keycontext key2_ctx;
 volatile int a;
 volatile int b;
-volatile uint8_t stop_flag;
-	static void long_start_callback(button *handle, void *user_data)
-		{
-			long_start_count++;
-		}
-	static void long_hold_callback(button *handle, void *user_data)
-		{
-			long_hold_count++;
-		}
-	static void long_start_callback2(button *handle, void *user_data)
-		{
-			long_start_count2++;
-		}
-	static void long_hold_callback2(button *handle, void *user_data)
-		{
-			long_hold_count2++;
-		}
-		static button btn1;
-		static button btn2;
+static button btn1;
+static button btn2;
+
+//生产者
+static void long_start_callback(button *handle,void *user_data)
+	{
+		keycontext *ctx = (keycontext *)user_data;
+		ctx -> long_start_pending++;
+	}
+static void long_hold_callback(button *handle, void *user_data)
+	{
+			keycontext *ctx = (keycontext *)user_data;
+			ctx->long_hold_pending++;
+	}
+
+	//消费者
+static void key_app_process(keycontext *ctx)
+{
+    if (ctx->long_start_pending > 0)
+    {
+        ctx->long_start_pending--;
+        ctx->long_start_handled++;
+
+        /* 将来在这里执行长按开始对应的业务 */
+    }
+
+    if (ctx->long_hold_pending > 0)
+    {
+        ctx->long_hold_pending--;
+        ctx->long_hold_handled++;
+
+        /* 将来在这里执行长按保持对应的业务 */
+    }
+}
 /* USER CODE END 0 */
 
 /**
@@ -116,10 +135,11 @@ int main(void)
 	button_init(&btn2,read_button_gpio,2,1);	
 	a = button_enroll(&btn1);
 	b = button_enroll(&btn2);//这里先初始化button结构体之后再加入链表,不要搞反了
-	button_attach(&btn1, BTN_LONG_PRESS_START, long_start_callback);
-	button_attach(&btn1, BTN_LONG_PRESS_HOLD, long_hold_callback);
-  button_attach(&btn2, BTN_LONG_PRESS_START, long_start_callback2);
-	button_attach(&btn2, BTN_LONG_PRESS_HOLD, long_hold_callback2);
+	button_attach(&btn1, BTN_LONG_PRESS_START,long_start_callback, &key1_ctx);
+	button_attach(&btn1, BTN_LONG_PRESS_HOLD,long_hold_callback, &key1_ctx);
+	button_attach(&btn2, BTN_LONG_PRESS_START,long_start_callback, &key2_ctx);
+	button_attach(&btn2, BTN_LONG_PRESS_HOLD,long_hold_callback, &key2_ctx);
+	
 	static uint32_t button_tick_last = 0;
   /* USER CODE END 2 */
 
@@ -127,11 +147,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-		if (stop_flag == 0 && (uint32_t)(HAL_GetTick())  >= 10000)
-    {
-        button_stop(&btn1);
-				stop_flag = 1;
-    }
+		key_app_process(&key1_ctx);
+		key_app_process(&key2_ctx);
 		if ((uint32_t)(HAL_GetTick() - button_tick_last) >= 5)
     {
         button_tick_last += 5;

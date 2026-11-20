@@ -54,11 +54,16 @@ void button_debounce(button *handle)
 
 	
 //------------注册回调-------------//
-void button_attach(button *handle,buttonEvent event,BtnCallBack callback)
+void button_attach(button *handle,buttonEvent event,BtnCallBack callback,void *user_data)
 	{
+		if(handle == NULL || (event >= BTN_EVENT_COUNT))
+			{
+				return;
+			}
+			
 		handle ->cb[event] = callback;
+		handle ->user_data = user_data;
 	}
-	
 //--------------内部触发函数	-----------------//
 static void button_emit(button *handle, buttonEvent event)
 	{
