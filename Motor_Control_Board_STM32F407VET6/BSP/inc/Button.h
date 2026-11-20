@@ -57,5 +57,6 @@ void button_debounce(button *handle);
 //void button_handle(button *handle);
 void button_attach(button *handle,buttonEvent event,BtnCallBack callback);
 int button_enroll(button *handle);
+void button_stop(button *handle);
 void button_Task(void);
 #endif

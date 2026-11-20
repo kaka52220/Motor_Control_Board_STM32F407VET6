@@ -60,6 +60,7 @@ volatile uint32_t long_start_count2 = 0;
 volatile uint32_t long_hold_count2 = 0;
 volatile int a;
 volatile int b;
+volatile uint8_t stop_flag;
 	static void long_start_callback(button *handle, void *user_data)
 		{
 			long_start_count++;
@@ -114,7 +115,7 @@ int main(void)
   button_init(&btn1,read_button_gpio,1,1);
 	button_init(&btn2,read_button_gpio,2,1);	
 	a = button_enroll(&btn1);
-	b = button_enroll(&btn2);
+	b = button_enroll(&btn2);//这里先初始化button结构体之后再加入链表,不要搞反了
 	button_attach(&btn1, BTN_LONG_PRESS_START, long_start_callback);
 	button_attach(&btn1, BTN_LONG_PRESS_HOLD, long_hold_callback);
   button_attach(&btn2, BTN_LONG_PRESS_START, long_start_callback2);
@@ -126,6 +127,11 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+		if (stop_flag == 0 && (uint32_t)(HAL_GetTick())  >= 10000)
+    {
+        button_stop(&btn1);
+				stop_flag = 1;
+    }
 		if ((uint32_t)(HAL_GetTick() - button_tick_last) >= 5)
     {
         button_tick_last += 5;

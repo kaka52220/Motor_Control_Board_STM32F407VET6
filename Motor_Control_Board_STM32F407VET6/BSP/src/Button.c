@@ -213,7 +213,34 @@ int button_enroll(button *handle)
 	
 	return 0;
 }
-	
+
+/*-------------在单链表中删除按键---------------------------------------------------------------------------------------*/
+void button_stop(button *handle)
+	{
+		button **curr = &head_handle;
+		
+		if(handle == NULL)
+			{
+				return;
+			}
+		
+		while(*curr != NULL)
+			{
+				if(*curr == handle)
+					{
+						*curr = handle ->next;
+						// *curr = *curr ->next; 这里要关注运算符优先级的问题,-> 大于 *,所以编译器解析成了 *(curr ->next)这里就是错误的;可以用*curr = (*curr) ->next 代替231行;
+						
+						handle ->next = NULL;//防野指针
+						return;		
+					}	
+					
+				curr = &((*curr) ->next);
+					
+			}
+	}	
+
+/*-----------------------按键主任务------------------------------------------------------------------------------------*/
 void button_Task(void)
 	{
 		button *target = head_handle;
