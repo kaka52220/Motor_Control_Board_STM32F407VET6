@@ -255,21 +255,5 @@ void button_Task(void)
 				button_handle(target);
 				target = target ->next;
 			}
-	}	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	}
 	

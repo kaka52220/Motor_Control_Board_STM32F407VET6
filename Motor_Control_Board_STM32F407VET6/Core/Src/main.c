@@ -18,6 +18,8 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "dma.h"
+#include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -67,7 +69,7 @@ volatile int b;
 static button btn1;
 static button btn2;
 
-//Éú²úÕß
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 static void long_start_callback(button *handle,void *user_data)
 	{
 		keycontext *ctx = (keycontext *)user_data;
@@ -79,7 +81,7 @@ static void long_hold_callback(button *handle, void *user_data)
 			ctx->long_hold_pending++;
 	}
 
-	//Ïû·ÑÕß
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 static void key_app_process(keycontext *ctx)
 {
     if (ctx->long_start_pending > 0)
@@ -87,7 +89,7 @@ static void key_app_process(keycontext *ctx)
         ctx->long_start_pending--;
         ctx->long_start_handled++;
 
-        /* ½«À´ÔÚÕâÀïÖ´ÐÐ³¤°´¿ªÊ¼¶ÔÓ¦µÄÒµÎñ */
+        /* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½Ð³ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½Ó¦ï¿½ï¿½Òµï¿½ï¿½ */
     }
 
     if (ctx->long_hold_pending > 0)
@@ -95,7 +97,7 @@ static void key_app_process(keycontext *ctx)
         ctx->long_hold_pending--;
         ctx->long_hold_handled++;
 
-        /* ½«À´ÔÚÕâÀïÖ´ÐÐ³¤°´±£³Ö¶ÔÓ¦µÄÒµÎñ */
+        /* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½Ð³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¶ï¿½Ó¦ï¿½ï¿½Òµï¿½ï¿½ */
     }
 }
 /* USER CODE END 0 */
@@ -130,11 +132,13 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
   button_init(&btn1,read_button_gpio,1,1);
 	button_init(&btn2,read_button_gpio,2,1);	
 	a = button_enroll(&btn1);
-	b = button_enroll(&btn2);//ÕâÀïÏÈ³õÊ¼»¯button½á¹¹ÌåÖ®ºóÔÙ¼ÓÈëÁ´±í,²»Òª¸ã·´ÁË
+	b = button_enroll(&btn2);//ï¿½ï¿½ï¿½ï¿½ï¿½È³ï¿½Ê¼ï¿½ï¿½buttonï¿½á¹¹ï¿½ï¿½Ö®ï¿½ï¿½ï¿½Ù¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½Òªï¿½ã·´ï¿½ï¿½
 	button_attach(&btn1, BTN_LONG_PRESS_START,long_start_callback, &key1_ctx);
 	button_attach(&btn1, BTN_LONG_PRESS_HOLD,long_hold_callback, &key1_ctx);
 	button_attach(&btn2, BTN_LONG_PRESS_START,long_start_callback, &key2_ctx);
@@ -147,13 +151,14 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-		key_app_process(&key1_ctx);
-		key_app_process(&key2_ctx);
 		if ((uint32_t)(HAL_GetTick() - button_tick_last) >= 5)
     {
         button_tick_last += 5;
 				button_Task();
     }
+		key_app_process(&key1_ctx);
+		key_app_process(&key2_ctx);
+		
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
