@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F407xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;../BSP/inc;../BSP/src;..\APP;..\Drive;..\Middleware</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;../BSP/inc;../BSP/src;..\APP;..\Driver;..\Middleware</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -730,12 +730,17 @@
             <File>
               <FileName>ringbuf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Drive\ringbuf.c</FilePath>
+              <FilePath>..\Driver\ringbuf.c</FilePath>
+            </File>
+            <File>
+              <FileName>ringbuf.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Driver\ringbuf.h</FilePath>
             </File>
             <File>
               <FileName>serial.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Drive\serial.c</FilePath>
+              <FilePath>..\Driver\serial.c</FilePath>
             </File>
           </Files>
         </Group>

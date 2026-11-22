@@ -24,6 +24,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "ringbuf.h"
 #include "Button.h"
 /* USER CODE END Includes */
 
@@ -100,6 +101,12 @@ static void key_app_process(keycontext *ctx)
         /* ����������ִ�г������ֶ�Ӧ��ҵ�� */
     }
 }
+static ringbuf_t testrb;
+static uint8_t mem[8];
+volatile uint32_t testused[4];
+volatile uint32_t testfree[4];
+
+
 /* USER CODE END 0 */
 
 /**
@@ -145,8 +152,25 @@ int main(void)
 	button_attach(&btn2, BTN_LONG_PRESS_HOLD,long_hold_callback, &key2_ctx);
 	
 	static uint32_t button_tick_last = 0;
-  /* USER CODE END 2 */
-
+	
+	ringbuf_init(&testrb,mem,8);
+	testused[0] = ringbuf_used(&testrb);
+	testfree[0] = ringbuf_free(&testrb);
+	
+	testrb.head = 3;
+	testrb.tail = 1;
+	testused[1] = ringbuf_used(&testrb);
+	testfree[1] = ringbuf_free(&testrb);
+	
+	testrb.head = 8;
+	testrb.tail = 0;
+	testused[2] = ringbuf_used(&testrb);
+	testfree[2] = ringbuf_free(&testrb);
+	
+	testrb.head = 9;
+	testrb.tail = 7;
+	testused[3] = ringbuf_used(&testrb);
+	testfree[3] = ringbuf_free(&testrb);
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
